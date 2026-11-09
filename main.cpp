@@ -52,6 +52,10 @@ void sendJson(httplib::Response& res, int status, const waste::json& body) {
 
 int main(int argc, char** argv) {
     int port = argc > 1 ? std::atoi(argv[1]) : 8080;
+    if (const char* env_port = std::getenv("PORT")) {
+        port = std::stoi(env_port);
+    }
+
     std::string publicDir = argc > 2 ? argv[2] : "public";
 
     waste::Engine engine;
@@ -91,11 +95,17 @@ int main(int argc, char** argv) {
         }
     });
 
-    std::cout << "Pune waste planner running.\n"
+    std::string host = "0.0.0.0";
+    if (const char* env_host = std::getenv("HOST")) {
+        host = env_host;
+    }
+
+    std::cout << "Pune waste planner running on " << host << ":" << port << ".\n"
               << "Open http://localhost:" << port << " in your browser. Press Ctrl+C to stop.\n";
-    // Use "0.0.0.0" instead of "127.0.0.1" to let other devices on your network open it too.
-    if (!svr.listen("0.0.0.0", port)) {
-        std::cerr << "Could not start on port " << port << ". Is another program using it? Try: server 8081\n";
+
+    // Use "0.0.0.0" to allow external connections and pass Render port health checks
+    if (!svr.listen(host.c_str(), port)) {
+        std::cerr << "Could not start on " << host << ":" << port << ". Is another program using it?\n";
         return 1;
     }
     return 0;

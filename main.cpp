@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
     std::cout << "Pune waste planner running.\n"
               << "Open http://localhost:" << port << " in your browser. Press Ctrl+C to stop.\n";
     // Use "0.0.0.0" instead of "127.0.0.1" to let other devices on your network open it too.
-    if (!svr.listen("127.0.0.1", port)) {
+    if (!svr.listen("0.0.0.0", port)) {
         std::cerr << "Could not start on port " << port << ". Is another program using it? Try: server 8081\n";
         return 1;
     }
